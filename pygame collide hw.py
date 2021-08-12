@@ -5,13 +5,16 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
-pygame.display.set_caption('My Game')
+time = 6
+minust = False
 
 width = 800
 height = 500
 
 screen_size = (width, height)
 screen = pygame.display.set_mode(screen_size)
+
+count = True
 
 ex_x = 0
 ex_y = 0
@@ -25,6 +28,7 @@ get_score = False
 
 text_font = pygame.font.Font('INVASION2000.TTF', 50)
 text_font2 = pygame.font.Font('INVASION2000.TTF', 25)
+text_font3 = pygame.font.Font('invasion2000.ttf', 75)
 
 bg_surf = pygame.image.load('Background.jpeg').convert_alpha()
 gh_surf = pygame.image.load('ghost.png').convert_alpha()
@@ -32,9 +36,7 @@ gh_rect = gh_surf.get_rect(midbottom = (c, 0))
 va_surf = pygame.image.load('vampire.png').convert_alpha()
 va_rect = va_surf.get_rect(midbottom = (400, 410))
 ex_surf = pygame.image.load('explosion.png').convert_alpha()
-
-text_surf = text_font.render("When they collide...", False, 'Black')
-text2_surf = text_font.render("Boom!", False, 'Red')
+bg2_surf = pygame.image.load('endmenu.jpeg').convert_alpha()
 
 pos = pygame.mouse.get_pos()[0]
 pos2 = pygame.mouse.get_pos()[0]
@@ -57,10 +59,40 @@ def ss():
     n = 2
     return n
 
-while True:
-    pos2 = pos
+def sb(font, size, word, tf, color):
+    text_font2 = pygame.font.Font(font, size)
+    text3_surf = text_font2.render(word, tf, color)
+    screen.blit(text3_surf, (0, 0))
+
+def tb(font, size, word, tf, color):
+    text_font2 = pygame.font.Font(font, size)
+    text4_surf = text_font2.render(word, tf, color)
+    screen.blit(text4_surf, (450, 0))
+
+while count == True:
+    text5_surf = text_font3.render(str(time), False, 'Black')
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+    
+    if time > 0:
+        pygame.time.delay(1000)
+        time = time - 1
+    else:
+        pygame.time.delay(500)
+        count = False
+        
+    screen.blit(bg2_surf, (0, 0))
+    screen.blit(text5_surf, (400, 200))
+    
+    pygame.display.update()
+    clock.tick(100)
+
+while True and count == False:
     tse = pygame.time.get_ticks()
-    tse = int(tse / 1000)
+    pos2 = pos
+    tse = int(tse / 1000 - 7)
     pos = pygame.mouse.get_pos()[0]
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -74,10 +106,7 @@ while True:
                 move(n, pos, pos2)
             else:
                 n = ss()
-                move(n, pos, pos2)   
-    
-    text3_surf = text_font2.render("score : " + str(score), False, 'Violet')
-    text4_surf = text_font2.render("time : " + str(tse) + " seconds", False, 'Violet')
+                move(n, pos, pos2)
     
     if n2 == 1:
         pos2 = pygame.mouse.get_pos()[0] + 0.01
@@ -100,9 +129,6 @@ while True:
         ex_x = gh_rect.left - 30
         ex_y = gh_rect.top - 15
         screen.blit(ex_surf, (ex_x, ex_y))
-        screen.blit(text2_surf, (300, 100))
-    else:
-        screen.blit(text_surf, (150, 100))
     
     if gh_rect.colliderect(va_rect) and get_score == False:
         old_score = score
@@ -114,8 +140,8 @@ while True:
 
     screen.blit(gh_surf, (gh_rect))
     screen.blit(va_surf, (va_rect))
-    screen.blit(text3_surf, (0, 0))
-    screen.blit(text4_surf, (0, 20))
+    sb('invasion2000.ttf', 30, "score : " + str(score), False, 'Black')
+    tb('invasion2000.ttf', 30, "time : " + str(tse) + " seconds", False, 'Black')
 
     pygame.display.update()
     clock.tick(100)
